@@ -1,8 +1,12 @@
 import { MongoClient } from 'mongodb';
 import axios from 'axios';
 // import { v4 as uuidv4 } from 'uuid';
+import dotenv from 'dotenv';
 
-const uri = 'mongodb+srv://yangfengforwork:JXqlO6iAjwdvD6aH@fspersonalcluster.ke4v7bk.mongodb.net/games';
+dotenv.config();
+
+const uri = process.env.DATABASE_KEY;
+const apiKey = process.env.API_KEY;
 
 const ifGameInDb = async (gameName:string) : Promise<boolean> => {
   const client = new MongoClient(uri);
@@ -128,7 +132,7 @@ const generateGamesInDatabase = async () => {
       console.log('Game ', gameName, ' existed: ', isExist);
       if (!isExist) {
         try {
-          const postResponse = await axios.get(`https://api.rawg.io/api/games?key=b93edb137bd94aabaaeec2e83150169c&search=${gameName}&search_precise=true`);
+          const postResponse = await axios.get(`https://api.rawg.io/api/games?key=${apiKey}&search=${gameName}&search_precise=true`);
           await addAGame(postResponse.data.results[0], currentAddingYear);
           console.log('Writed into database: ', postResponse.data.results[0].name);
         } catch (error) {
